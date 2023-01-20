@@ -15,6 +15,19 @@ repositories {
     // Use jcenter for resolving dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
+    
+}
+
+configurations {
+    aspectj
+}
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding ='UTF-8'
+
+tasks.withType(JavaCompile)
+{
+options.encoding = 'UTF-8'
 }
 
 dependencies {
@@ -68,15 +81,19 @@ dependencies {
     
     // https://mvnrepository.com/artifact/org.aspectj/aspectjweaver
     runtime group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.8'
+    
+    aspectj group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.8'
+    
+    compile group: 'org.aeonbits.owner', name: 'owner', version: '1.0.10'
 }
 
 test {
-    doFirst {
+   doFirst {
         jvmArgs "-javaagent:"+configurations.aspectj.asPath
     }
-    
+
     useTestNG(){
-        suites 'src/test/resources/runNopCommerceUser.xml'
+        suites 'src/test/resources/runNopCommerceUser.Owner.xml'
         outputDirectory = file("$projectDir/testng-report")
     }
     
@@ -84,6 +101,8 @@ test {
         showStandardStreams = true
     }
     
+    systemProperty 'envGradle', System.getProperty('envGradle','envGradle')
+    systemProperty "file.encoding", "utf-8"
     reports.html.setDestination(file("$projectDir/gradle-output"))
 }
 
